@@ -125,8 +125,9 @@ contract MetaSwapRouter is ReentrancyGuard, Pausable, MulticallExtended, SelfPer
     /// @notice Changes the controller. Only called by the existing controller.
     /// @param  _controller New controller
     function changeController(address _controller) external {
-
         isAuthorizedController();
+        require(address(0) != _controller, 'Address is address(0)');
+
         controller = _controller;
     }
 

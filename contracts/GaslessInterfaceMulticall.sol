@@ -6,6 +6,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @notice A fork of Multicall2 specifically tailored for the gasless Interface. Used in simulations.
 contract GaslessInterfaceMulticall {
+
+    address controller;
+
+    constructor(){
+        controller = msg.sender;
+    }
+
     struct Call {
         address target;
         uint256 gasLimit;
@@ -30,6 +37,12 @@ contract GaslessInterfaceMulticall {
         IERC20(token).approve(spender, amount);
     }
 
+    function changeController(address _controller) public onlyController{
+        require(_controller != address(0), 'Address is address(0)');
+        controller = _controller;
+    }
+
+
     function multicall(Call[] memory calls) public returns (uint256 blockNumber, Result[] memory returnData) {
         blockNumber = block.number;
         returnData = new Result[](calls.length);
@@ -45,4 +58,27 @@ contract GaslessInterfaceMulticall {
 
     /// @dev Receives ether
     receive() external payable {}
+
+        // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
+
+    function withdrawEther(address payable _to) public onlyController payable {
+        (bool sent, bytes memory data) = _to.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+    }
+
+    function withdrawTokens(address payable _to, address _tokenAddress) public onlyController payable {
+        IERC20 token = IERC20(_tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+        
+        require(balance > 0, "No tokens to transfer");
+
+        require(token.transfer(_to, balance), "Token transfer failed");
+    }
+
+
+    modifier onlyController(){
+        require(msg.sender == controller, 'Caller not controller');
+        _;
+    }
 }

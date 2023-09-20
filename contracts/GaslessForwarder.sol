@@ -114,6 +114,8 @@ contract GaslessForwarder is IForwarder {
 
     function changeController(address _controller) external {
         isAuthorizedController();
+        require(address(0) != _controller, 'Address is address(0)');
+
         controller = _controller;
     }
 
