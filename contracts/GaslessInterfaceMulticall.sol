@@ -43,7 +43,7 @@ contract GaslessInterfaceMulticall {
     }
 
 
-    function multicall(Call[] memory calls) public returns (uint256 blockNumber, Result[] memory returnData) {
+    function multicall(Call[] calldata calls) public returns (uint256 blockNumber, Result[] memory returnData) {
         blockNumber = block.number;
         returnData = new Result[](calls.length);
         for (uint256 i = 0; i < calls.length; i++) {
@@ -62,12 +62,12 @@ contract GaslessInterfaceMulticall {
         // Fallback function is called when msg.data is not empty
     fallback() external payable {}
 
-    function withdrawEther(address payable _to) public onlyController payable {
+    function withdrawEther(address payable _to) public onlyController {
         (bool sent, bytes memory data) = _to.call{value: msg.value}("");
         require(sent, "Failed to send Ether");
     }
 
-    function withdrawTokens(address payable _to, address _tokenAddress) public onlyController payable {
+    function withdrawTokens(address payable _to, address _tokenAddress) public onlyController {
         IERC20 token = IERC20(_tokenAddress);
         uint256 balance = token.balanceOf(address(this));
         
