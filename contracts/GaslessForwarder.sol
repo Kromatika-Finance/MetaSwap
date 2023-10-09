@@ -14,7 +14,6 @@ contract GaslessForwarder is IForwarder {
 
     using SafeMath for uint256;
 
-    uint256 public immutable chainId;
 
     /// @dev controller
     address public controller;
@@ -29,16 +28,9 @@ contract GaslessForwarder is IForwarder {
     mapping(bytes32 => bool) public messageDelivered;
 
     constructor() {
-
         controller = msg.sender;
-
-        uint256 _chainId;
-        assembly {
-            _chainId := chainid()
-        }
-        chainId = _chainId;
-
     }
+
 
     function executeCall(
         ForwardRequest calldata request,
@@ -52,7 +44,7 @@ contract GaslessForwarder is IForwarder {
 
         address sender = _msgSender();
         bytes32 digest = keccak256(abi.encodePacked(
-                    chainId,
+                    block.chainid,
                     sender,
                     this,
                     request.validator,
