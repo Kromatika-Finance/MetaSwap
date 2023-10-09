@@ -62,9 +62,11 @@ contract GaslessInterfaceMulticall {
         // Fallback function is called when msg.data is not empty
     fallback() external payable {}
 
-    function withdrawEther(address payable _to) public onlyController {
-        (bool sent, bytes memory data) = _to.call{value: msg.value}("");
-        require(sent, "Failed to send Ether");
+    function withdraw() public {
+        uint amount = address(this).balance;
+
+        (bool success, ) = controller.call{value: amount}("");
+        require(success, "Failed to send Ether");
     }
 
     function withdrawTokens(address payable _to, address _tokenAddress) public onlyController {
