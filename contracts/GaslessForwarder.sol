@@ -27,8 +27,28 @@ contract GaslessForwarder is IForwarder {
     /// @dev seen message
     mapping(bytes32 => bool) public messageDelivered;
 
+    uint256 public chainId;
+
+
     constructor() {
         controller = msg.sender;
+
+        uint256 _chainId;
+        assembly {
+            _chainId := chainid()
+        }
+        chainId = _chainId;
+    }
+
+
+    function changeChainId() public { 
+        isAuthorizedController();
+
+        uint256 _chainId;
+        assembly {
+            _chainId := chainid()
+        }
+        chainId = _chainId;
     }
 
 
@@ -44,7 +64,7 @@ contract GaslessForwarder is IForwarder {
 
         address sender = _msgSender();
         bytes32 digest = keccak256(abi.encodePacked(
-                    block.chainid,
+                    chainId,
                     sender,
                     this,
                     request.validator,
