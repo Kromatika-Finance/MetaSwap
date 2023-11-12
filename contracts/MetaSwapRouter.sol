@@ -171,6 +171,11 @@ contract MetaSwapRouter is ReentrancyGuard, Pausable, MulticallExtended, SelfPer
         return trustedForwarders[forwarder];
     }
 
+    function updateAdapterAddress(string calldata _adapterId, address payable _newAddress) public {
+        isAuthorizedController();
+        adapters[_adapterId] = _newAddress;
+    }
+
     function _msgSender() internal virtual override view returns (address payable ret) {
         if (msg.data.length >= 24 && isTrustedForwarder(msg.sender)) {
             // At this point we know that the sender is a trusted forwarder,

@@ -9,8 +9,7 @@ library LibERC20Adapter {
 
     /// @dev ETH pseudo-token address.
     address constant internal ETH_TOKEN_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    /// @dev ETH pseudo-token.
-    IERC20 constant internal ETH_TOKEN = IERC20(ETH_TOKEN_ADDRESS);
+
     /// @dev Return value indicating success
     bytes4 constant internal TRANSFORMER_SUCCESS = 0x13c9929e;
 
