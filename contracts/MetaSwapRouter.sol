@@ -12,7 +12,6 @@ import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "./interfaces/IAdapter.sol";
 
 import "./lib/SelfPermit.sol";
-import "./lib/MulticallExtended.sol";
 
 import "./lib/LibERC20Adapter.sol";
 import "./lib/Constants.sol";
@@ -23,7 +22,7 @@ import "./FlashWallet.sol";
 /// @notice Router that aggregates liquidity from different sources and aggregators.
 ///         The router is the entry point of the swap. All token allowance are given to the router.
 /// @author MetaDexa.io
-contract MetaSwapRouter is ReentrancyGuard, Pausable, MulticallExtended, SelfPermit {
+contract MetaSwapRouter is ReentrancyGuard, Pausable, SelfPermit {
 
     using SafeMath for uint256;
 
