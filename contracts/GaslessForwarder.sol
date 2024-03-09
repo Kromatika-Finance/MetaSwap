@@ -14,7 +14,6 @@ contract GaslessForwarder is IForwarder {
 
     using SafeMath for uint256;
 
-    uint256 public immutable chainId;
 
     /// @dev controller
     address public controller;
@@ -28,8 +27,10 @@ contract GaslessForwarder is IForwarder {
     /// @dev seen message
     mapping(bytes32 => bool) public messageDelivered;
 
-    constructor() {
+    uint256 public chainId;
 
+
+    constructor() {
         controller = msg.sender;
 
         uint256 _chainId;
@@ -37,8 +38,19 @@ contract GaslessForwarder is IForwarder {
             _chainId := chainid()
         }
         chainId = _chainId;
-
     }
+
+
+    function changeChainId() public { 
+        isAuthorizedController();
+
+        uint256 _chainId;
+        assembly {
+            _chainId := chainid()
+        }
+        chainId = _chainId;
+    }
+
 
     function executeCall(
         ForwardRequest calldata request,
@@ -114,6 +126,8 @@ contract GaslessForwarder is IForwarder {
 
     function changeController(address _controller) external {
         isAuthorizedController();
+        require(address(0) != _controller, 'Address is address(0)');
+
         controller = _controller;
     }
 

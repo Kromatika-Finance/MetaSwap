@@ -12,7 +12,6 @@ import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "./interfaces/IAdapter.sol";
 
 import "./lib/SelfPermit.sol";
-import "./lib/MulticallExtended.sol";
 
 import "./lib/LibERC20Adapter.sol";
 import "./lib/Constants.sol";
@@ -23,7 +22,7 @@ import "./FlashWallet.sol";
 /// @notice Router that aggregates liquidity from different sources and aggregators.
 ///         The router is the entry point of the swap. All token allowance are given to the router.
 /// @author MetaDexa.io
-contract MetaSwapRouter is ReentrancyGuard, Pausable, MulticallExtended, SelfPermit {
+contract MetaSwapRouter is ReentrancyGuard, Pausable, SelfPermit {
 
     using SafeMath for uint256;
 
@@ -125,8 +124,9 @@ contract MetaSwapRouter is ReentrancyGuard, Pausable, MulticallExtended, SelfPer
     /// @notice Changes the controller. Only called by the existing controller.
     /// @param  _controller New controller
     function changeController(address _controller) external {
-
         isAuthorizedController();
+        require(address(0) != _controller, 'Address is address(0)');
+
         controller = _controller;
     }
 
@@ -168,6 +168,11 @@ contract MetaSwapRouter is ReentrancyGuard, Pausable, MulticallExtended, SelfPer
 
     function isTrustedForwarder(address forwarder) internal view returns(bool) {
         return trustedForwarders[forwarder];
+    }
+
+    function updateAdapterAddress(string calldata _adapterId, address payable _newAddress) public {
+        isAuthorizedController();
+        adapters[_adapterId] = _newAddress;
     }
 
     function _msgSender() internal virtual override view returns (address payable ret) {

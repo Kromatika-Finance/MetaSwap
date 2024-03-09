@@ -41,6 +41,10 @@ contract GaslessSwapAdapter is IAdapter {
         uint256 approvalAmount;
         uint256 senderAmount;
 
+        require(address(data.paymentToken) == address(data.tokenTo), 'GSA_PT');
+        require(address(data.tokenTo) != address(data.tokenFrom), 'GSA_NTF');
+
+
         // 1. check allowance and approve (even for WETH)
         if (!LibERC20Adapter.isTokenETH(data.tokenFrom)) {
             approvalAmount = address(data.tokenFrom) == address(data.paymentToken) ?
